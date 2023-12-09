@@ -15,7 +15,7 @@ maxlen = 500
 
 epochs = 100
 
-batches = 100
+batches = 1
 
 hypervector_size = 1024
 bits = 5
