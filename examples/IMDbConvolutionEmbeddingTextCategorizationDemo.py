@@ -68,9 +68,9 @@ for e in range(train_y.shape[0]):
 				X_train[e, position*hypervector_size + bit_index] = 1
 			position += 1
 
-X_train = X_train.reshape((train_y.shape[0], maxlen, 1, hypervector_size))[0:100]
+X_train = X_train.reshape((train_y.shape[0], maxlen, 1, hypervector_size))
 
-Y_train = train_y.astype(np.uint32)[0:100]
+Y_train = train_y.astype(np.uint32)
 
 print(test_y.shape[0])
 X_test = np.empty((test_y.shape[0], maxlen*hypervector_size), dtype=np.uint32)
@@ -82,9 +82,9 @@ for e in range(test_y.shape[0]):
 				X_test[e, position*hypervector_size + bit_index] = 1
 			position += 1
 
-X_test = X_test.reshape((test_y.shape[0], maxlen, 1, hypervector_size))[0:100]
+X_test = X_test.reshape((test_y.shape[0], maxlen, 1, hypervector_size))
 
-Y_test = test_y.astype(np.uint32)[0:100]
+Y_test = test_y.astype(np.uint32)
 
 tm = MultiClassConvolutionalTsetlinMachine2D(clauses, T, s, (1, 1))
 for i in range(epochs):
