@@ -175,7 +175,7 @@ code_update = """
 		}
 
 		// Evaluate example
-		__global__ void evaluate(unsigned int *global_ta_state, int *clause_weights, int *class_sum, int *X, unsigned long long example)
+		__global__ void evaluate(unsigned int *global_ta_state, int *clause_weights, int *class_sum, int *X, int example)
 		{
 			int index = blockIdx.x * blockDim.x + threadIdx.x;
 			int stride = blockDim.x * gridDim.x;
@@ -212,7 +212,7 @@ code_update = """
 		}
 
 		// Update state of Tsetlin Automata team
-		__global__ void update(curandState *state, unsigned int *global_ta_state, int *clause_weights, int *class_sum, int *X, int *y, unsigned long long example)
+		__global__ void update(curandState *state, unsigned int *global_ta_state, int *clause_weights, int *class_sum, int *X, int *y, int example)
 		{
 			int index = blockIdx.x * blockDim.x + threadIdx.x;
 			int stride = blockDim.x * gridDim.x;
@@ -272,7 +272,7 @@ code_evaluate = """
 					continue;
 				}
 
-				for (unsigned long long e = 0; e < NUMBER_OF_EXAMPLES; ++e) {
+				for (int e = 0; e < NUMBER_OF_EXAMPLES; ++e) {
 					int clause_output;
 					for (int patch = 0; patch < PATCHES; ++patch) {
 						clause_output = 1;
@@ -385,7 +385,7 @@ code_encode = """
 
 			for (int i = index; i < number_of_examples; i += stride) {
 				unsigned long long encoded_pos = i * number_of_patches * number_of_ta_chunks;
-				unsigned long input_pos = i * input_step_size;
+				unsigned int input_pos = i * input_step_size;
 
 				int patch_nr = 0;
 				// Produce the patches of the current image
