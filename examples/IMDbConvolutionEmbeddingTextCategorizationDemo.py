@@ -93,12 +93,14 @@ tm = MultiClassConvolutionalTsetlinMachine2D(clauses, T, s, (1, 1))
 for i in range(epochs):
     start_training = time()
     for batch in range(10):
+    	print("Training batch", batch+1)
     	tm.fit(X_train[batch*batch_size_train:(batch+1)*batch_size_train,:], Y_train[batch*batch_size_train:(batch+1)*batch_size_train], epochs=1, incremental=True)
     stop_training = time()
 
     start_testing = time()
     y_predict_test = np.zeros(0, dtype=np.uint32)
     for batch in range(10):
+    	print("Testing batch", batch+1)
     	y_predict_test = np.concatenate((y_predict_test, tm.predict(X_test[batch*batch_size_test:(batch+1)*batch_size_test,:])))
     stop_testing = time()
 
