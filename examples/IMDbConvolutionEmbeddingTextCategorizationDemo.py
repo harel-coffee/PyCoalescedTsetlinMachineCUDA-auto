@@ -96,21 +96,22 @@ for i in range(epochs):
     start_training = time()
     for batch in range(batches):
     	print("Training batch", batch+1)
-    	tm.fit(X_train[batch*batch_size_train:(batch+1)*batch_size_train,:], Y_train[batch*batch_size_train:(batch+1)*batch_size_train], epochs=1, incremental=True)
+    	print(X_train.shape, X_train[batch*batch_size_train:(batch+1)*batch_size_train].shape)
+    	tm.fit(X_train[batch*batch_size_train:(batch+1)*batch_size_train], Y_train[batch*batch_size_train:(batch+1)*batch_size_train], epochs=1, incremental=True)
     stop_training = time()
 
     start_testing = time()
     y_predict_test = np.zeros(0, dtype=np.uint32)
     for batch in range(batches):
     	print("Testing batch", batch+1)
-    	y_predict_test = np.concatenate((y_predict_test, tm.predict(X_test[batch*batch_size_test:(batch+1)*batch_size_test,:])))
+    	y_predict_test = np.concatenate((y_predict_test, tm.predict(X_test[batch*batch_size_test:(batch+1)*batch_size_test])))
     stop_testing = time()
 
     result_test = 100*(y_predict_test == Y_test).mean()
 
     y_predict_train = np.zeros(0, dtype=np.uint32)
     for batch in range(batches):
-    	y_predict_train = np.concatenate((y_predict_train, tm.predict(X_train[batch*batch_size_train:(batch+1)*batch_size_train,:])))
+    	y_predict_train = np.concatenate((y_predict_train, tm.predict(X_train[batch*batch_size_train:(batch+1)*batch_size_train])))
 
     result_train = 100*(tm.predict(X_train) == Y_train).mean()
 
