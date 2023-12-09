@@ -15,8 +15,8 @@ maxlen = 500
 
 epochs = 100
 
-hypervector_size = 128
-bits = 64
+hypervector_size = 64
+bits = 32
 
 clauses = 10000
 T = 8000
@@ -47,7 +47,7 @@ print("Retrieving embeddings...")
 indexes = np.arange(hypervector_size, dtype=np.uint32)
 encoding = {}
 for i in range(NUM_WORDS+INDEX_FROM):
-	encoding[i] = np.random.choice(indexes, size=(bits))
+	encoding[i] = np.random.choice(indexes, size=(bits), replace=False)
 
 
 # encoding = {}
