@@ -16,7 +16,7 @@ maxlen = 500
 epochs = 100
 
 hypervector_size = 512
-bits = 256
+bits = 5
 
 clauses = 10000
 T = 8000
