@@ -68,30 +68,24 @@ for i in range(NUM_WORDS+INDEX_FROM):
 print("Producing bit representation...")
 
 print(train_y.shape[0])
-X_train = np.zeros((train_y.shape[0], maxlen*hypervector_size), dtype=np.uint32)
+X_train = np.zeros((train_y.shape[0], maxlen, 1, hypervector_size), dtype=np.uint32)
 for e in range(train_y.shape[0]):
 	position = 0
 	for word_id in train_x[e]:
 		if word_id in encoding:
-			for bit_index in encoding[word_id]:
-				X_train[e, position*hypervector_size + bit_index] = 1
+			X_train[e, position, 0][encoding[word_id]] = 1
 			position += 1
-
-X_train = X_train.reshape((train_y.shape[0], maxlen, 1, hypervector_size))
 
 Y_train = train_y.astype(np.uint32)
 
 print(test_y.shape[0])
-X_test = np.zeros((test_y.shape[0], maxlen*hypervector_size), dtype=np.uint32)
+X_test = np.zeros((test_y.shape[0], maxlen, 1, hypervector_size), dtype=np.uint32)
 for e in range(test_y.shape[0]):
 	position = 0
 	for word_id in test_x[e]:
 		if word_id in encoding:
-			for bit_index in encoding[word_id]:
-				X_test[e, position*hypervector_size + bit_index] = 1
+			X_test[e, position, 0][encoding[word_id]] = 1
 			position += 1
-
-X_test = X_test.reshape((test_y.shape[0], maxlen, 1, hypervector_size))
 
 Y_test = test_y.astype(np.uint32)
 
