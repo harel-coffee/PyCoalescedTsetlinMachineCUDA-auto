@@ -15,7 +15,7 @@ maxlen = 500
 
 epochs = 100
 
-batches = 1
+batches = 10
 
 hypervector_size = 1024
 bits = 5
@@ -70,9 +70,9 @@ for e in range(train_y.shape[0]):
 				X_train[e, position*hypervector_size + bit_index] = 1
 			position += 1
 
-X_train = X_train.reshape((train_y.shape[0], maxlen, 1, hypervector_size))
+X_train = X_train.reshape((train_y.shape[0], maxlen, 1, hypervector_size))[0:100]
 
-Y_train = train_y.astype(np.uint32)
+Y_train = train_y.astype(np.uint32)[0:100]
 
 print(test_y.shape[0])
 X_test = np.empty((test_y.shape[0], maxlen*hypervector_size), dtype=np.uint32)
@@ -84,9 +84,9 @@ for e in range(test_y.shape[0]):
 				X_test[e, position*hypervector_size + bit_index] = 1
 			position += 1
 
-X_test = X_test.reshape((test_y.shape[0], maxlen, 1, hypervector_size))
+X_test = X_test.reshape((test_y.shape[0], maxlen, 1, hypervector_size))[0:100]
 
-Y_test = test_y.astype(np.uint32)
+Y_test = test_y.astype(np.uint32)[0:100]
 
 batch_size_train = train_y.shape[0] // batches
 batch_size_test = test_y.shape[0] // batches
@@ -107,6 +107,7 @@ for i in range(epochs):
     	y_predict_test = np.concatenate((y_predict_test, tm.predict(X_test[batch*batch_size_test:(batch+1)*batch_size_test])))
     stop_testing = time()
 
+    print(y_predict_test.shape, Y_test.shape)
     result_test = 100*(y_predict_test == Y_test).mean()
 
     y_predict_train = np.zeros(0, dtype=np.uint32)
