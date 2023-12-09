@@ -187,13 +187,13 @@ code_update = """
 				for (int patch = 0; patch < PATCHES; ++patch) {
 					clause_output = 1;
 					for (int la_chunk = 0; la_chunk < LA_CHUNKS-1; ++la_chunk) {
-						if ((ta_state[la_chunk*STATE_BITS + STATE_BITS - 1] & X[example*(LA_CHUNKS*PATCHES) + patch*LA_CHUNKS + la_chunk]) != ta_state[la_chunk*STATE_BITS + STATE_BITS - 1]) {
+						if ((ta_state[la_chunk*STATE_BITS + STATE_BITS - 1] & X[(unsigned long long)example*(LA_CHUNKS*PATCHES) + patch*LA_CHUNKS + la_chunk]) != ta_state[la_chunk*STATE_BITS + STATE_BITS - 1]) {
 							clause_output = 0;
 							break;
 						}
 					}
 
-					if ((ta_state[(LA_CHUNKS-1)*STATE_BITS + STATE_BITS - 1] & X[example*(LA_CHUNKS*PATCHES) + patch*LA_CHUNKS + LA_CHUNKS-1] & FILTER) != (ta_state[(LA_CHUNKS-1)*STATE_BITS + STATE_BITS - 1] & FILTER)) {
+					if ((ta_state[(LA_CHUNKS-1)*STATE_BITS + STATE_BITS - 1] & X[(unsigned long long)example*(LA_CHUNKS*PATCHES) + patch*LA_CHUNKS + LA_CHUNKS-1] & FILTER) != (ta_state[(LA_CHUNKS-1)*STATE_BITS + STATE_BITS - 1] & FILTER)) {
 						clause_output = 0;
 					}
 
@@ -226,7 +226,7 @@ code_update = """
 
 				unsigned int clause_output;
 				int clause_patch;
-				calculate_clause_output(&localState, ta_state, &clause_output, &clause_patch, &X[example*(LA_CHUNKS*PATCHES)]);
+				calculate_clause_output(&localState, ta_state, &clause_output, &clause_patch, &X[(unsigned long long)example*(LA_CHUNKS*PATCHES)]);
 
 				for (unsigned long long class_id = 0; class_id < CLASSES; ++class_id) {
 					int local_class_sum = class_sum[class_id];
@@ -235,7 +235,7 @@ code_update = """
 					} else if (local_class_sum < -THRESHOLD) {
 						local_class_sum = -THRESHOLD;
 					}
-					update_clause(&localState, &clause_weights[class_id*CLAUSES + clause], ta_state, clause_output, clause_patch, &X[example*(LA_CHUNKS*PATCHES)], y[example*CLASSES + class_id], local_class_sum);
+					update_clause(&localState, &clause_weights[class_id*CLAUSES + clause], ta_state, clause_output, clause_patch, &X[(unsigned long long)example*(LA_CHUNKS*PATCHES)], y[example*CLASSES + class_id], local_class_sum);
 				}
 			}
 		
@@ -272,7 +272,7 @@ code_evaluate = """
 					continue;
 				}
 
-				for (int e = 0; e < NUMBER_OF_EXAMPLES; ++e) {
+				for (unsigned long long e = 0; e < NUMBER_OF_EXAMPLES; ++e) {
 					int clause_output;
 					for (int patch = 0; patch < PATCHES; ++patch) {
 						clause_output = 1;
