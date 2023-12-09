@@ -357,7 +357,7 @@ code_encode = """
 				number_of_ta_chunks= (((number_of_features-1)/32 + 1));
 			}
 
-			for (int i = index; i < number_of_examples * number_of_patches * number_of_ta_chunks; i += stride) {
+			for (unsigned long long i = index; i < number_of_examples * number_of_patches * number_of_ta_chunks; i += stride) {
 				encoded_X[i] = 0;
 			}
 		}
