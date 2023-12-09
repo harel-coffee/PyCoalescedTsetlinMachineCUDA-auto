@@ -88,8 +88,8 @@ X_test = X_test.reshape((test_y.shape[0], maxlen, 1, hypervector_size))[0:100]
 
 Y_test = test_y.astype(np.uint32)[0:100]
 
-batch_size_train = train_y.shape[0] // batches
-batch_size_test = test_y.shape[0] // batches
+batch_size_train = Y_train.shape[0] // batches
+batch_size_test = Y_test.shape[0] // batches
 
 tm = MultiClassConvolutionalTsetlinMachine2D(clauses, T, s, (1, 1))
 for i in range(epochs):
