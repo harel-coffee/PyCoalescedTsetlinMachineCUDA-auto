@@ -47,7 +47,7 @@ print("Retrieving embeddings...")
 encoding = {}
 #f = open("/data/near-lossless-binarization/binary_vectors_512.vec", "r")
 #f = open("/data/near-lossless-binarization/binary_vectors_fasttext_256.vec", "r")
-f = open("/data/near-lossless-binarization/binary_vectors_bayesian_256.vec", "r")
+f = open("/data/near-lossless-binarization/binary_vectors_bayesian_256.bin", "r")
 
 line = f.readline()
 line = f.readline().strip()
