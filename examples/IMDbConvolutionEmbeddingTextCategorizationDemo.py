@@ -15,9 +15,7 @@ maxlen = 500
 
 epochs = 100
 
-batches = 10
-
-hypervector_size = 1024
+hypervector_size = 256
 bits = 5
 
 clauses = 10000
@@ -47,7 +45,7 @@ id_to_word = {value:key for key,value in word_to_id.items()}
 print("Retrieving embeddings...")
 
 encoding = {}
-f = open("/data/near-lossless-binarization/binary_vectors_1024.vec", "r")
+f = open("/data/near-lossless-binarization/binary_vectors_256.vec", "r")
 line = f.readline()
 line = f.readline().strip()
 while line:
@@ -88,31 +86,15 @@ X_test = X_test.reshape((test_y.shape[0], maxlen, 1, hypervector_size))[0:100]
 
 Y_test = test_y.astype(np.uint32)[0:100]
 
-batch_size_train = Y_train.shape[0] // batches
-batch_size_test = Y_test.shape[0] // batches
-
 tm = MultiClassConvolutionalTsetlinMachine2D(clauses, T, s, (1, 1))
 for i in range(epochs):
     start_training = time()
-    for batch in range(batches):
-    	print("Training batch", batch+1)
-    	print(X_train.shape, X_train[batch*batch_size_train:(batch+1)*batch_size_train].shape)
-    	tm.fit(X_train[batch*batch_size_train:(batch+1)*batch_size_train], Y_train[batch*batch_size_train:(batch+1)*batch_size_train], epochs=1, incremental=True)
+    tm.fit(X_train, Y_train, epochs=1, incremental=True)
     stop_training = time()
 
     start_testing = time()
-    y_predict_test = np.zeros(0, dtype=np.uint32)
-    for batch in range(batches):
-    	print("Testing batch", batch+1)
-    	y_predict_test = np.concatenate((y_predict_test, tm.predict(X_test[batch*batch_size_test:(batch+1)*batch_size_test])))
+    result_test = 100*(tm.predict(X_test) == Y_test).mean()
     stop_testing = time()
-
-    print(y_predict_test.shape, Y_test.shape)
-    result_test = 100*(y_predict_test == Y_test).mean()
-
-    y_predict_train = np.zeros(0, dtype=np.uint32)
-    for batch in range(batches):
-    	y_predict_train = np.concatenate((y_predict_train, tm.predict(X_train[batch*batch_size_train:(batch+1)*batch_size_train])))
 
     result_train = 100*(tm.predict(X_train) == Y_train).mean()
 
