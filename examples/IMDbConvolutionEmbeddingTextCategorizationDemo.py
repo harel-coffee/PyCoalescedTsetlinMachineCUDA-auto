@@ -15,8 +15,7 @@ maxlen = 500
 
 epochs = 100
 
-hypervector_size = 256
-bits = 5
+hypervector_size = 1024
 
 clauses = 10000
 T = 8000
@@ -44,10 +43,16 @@ id_to_word = {value:key for key,value in word_to_id.items()}
 
 print("Retrieving embeddings...")
 
+# indexes = np.arange(hypervector_size, dtype=np.uint32)
+# encoding = {}
+# for i in range(NUM_WORDS+INDEX_FROM):
+# 	encoding[i] = np.random.choice(indexes, size=(bits))
+
+
 encoding = {}
-#f = open("/data/near-lossless-binarization/binary_vectors_512.vec", "r")
+f = open("/data/near-lossless-binarization/binary_vectors_512.vec", "r")
 #f = open("/data/near-lossless-binarization/binary_vectors_fasttext_256.vec", "r")
-f = open("/data/near-lossless-binarization/binary_vectors_bayesian_256.bin", "r")
+#f = open("/data/near-lossless-binarization/binary_vectors_bayesian_256.bin", "r")
 
 line = f.readline()
 line = f.readline().strip()
@@ -62,7 +67,7 @@ f.close()
 print("Producing bit representation...")
 
 print(train_y.shape[0])
-X_train = np.empty((train_y.shape[0], maxlen*hypervector_size), dtype=np.uint32)
+X_train = np.zeros((train_y.shape[0], maxlen*hypervector_size), dtype=np.uint32)
 for e in range(train_y.shape[0]):
 	position = 0
 	for word_id in train_x[e]:
@@ -76,7 +81,7 @@ X_train = X_train.reshape((train_y.shape[0], maxlen, 1, hypervector_size))
 Y_train = train_y.astype(np.uint32)
 
 print(test_y.shape[0])
-X_test = np.empty((test_y.shape[0], maxlen*hypervector_size), dtype=np.uint32)
+X_test = np.zeros((test_y.shape[0], maxlen*hypervector_size), dtype=np.uint32)
 for e in range(test_y.shape[0]):
 	position = 0
 	for word_id in test_x[e]:
