@@ -53,11 +53,11 @@ class CommonTsetlinMachine():
 		self.ta_state = np.array([])
 		self.clause_weights = np.array([])
 
+		self.first = True
+
 		mod_encode = SourceModule(kernels.code_encode, no_extern_c=True)
 		self.prepare_encode = mod_encode.get_function("prepare_encode")
 		self.encode = mod_encode.get_function("encode")
-
-		self.first = True
 
 	def encode_X(self, X, encoded_X_gpu):
 		number_of_examples = X.shape[0]
@@ -158,10 +158,9 @@ class CommonTsetlinMachine():
 	def _fit(self, X, encoded_Y, epochs=100, incremental=False):
 		number_of_examples = X.shape[0]
 
-		if (not np.array_equal(self.X_train, X)) or (not np.array_equal(self.encoded_Y_train, encoded_Y)):
-			self.X_train = X
-			self.encoded_Y_train = encoded_Y
-			
+		if self.first:
+			self.first = False
+
 			if len(X.shape) == 3:
 				self.dim = (X.shape[1], X.shape[2],  1)
 			elif len(X.shape) == 4:
@@ -197,6 +196,9 @@ class CommonTsetlinMachine():
 
 			self.allocate_gpu_memory(number_of_examples)
 
+			self.prepare(g.state, self.ta_state_gpu, self.clause_weights_gpu, self.class_sum_gpu, grid=self.grid, block=self.block)
+			cuda.Context.synchronize()
+
 			mod_update = SourceModule(parameters + kernels.code_header + kernels.code_update, no_extern_c=True)
 			self.update = mod_update.get_function("update")
 			self.update.prepare("PPPPPPi")
@@ -205,15 +207,18 @@ class CommonTsetlinMachine():
 			self.evaluate_update.prepare("PPPPi")
 
 			self.encoded_X_training_gpu = cuda.mem_alloc(int(number_of_examples * self.number_of_patches * self.number_of_ta_chunks*4))
-			self.encode_X(X, self.encoded_X_training_gpu)
 		
 			self.Y_gpu = cuda.mem_alloc(encoded_Y.nbytes)
-			cuda.memcpy_htod(self.Y_gpu, encoded_Y)
 		
-		if incremental == False or self.first:
+		if incremental == False:
 			self.prepare(g.state, self.ta_state_gpu, self.clause_weights_gpu, self.class_sum_gpu, grid=self.grid, block=self.block)
 			cuda.Context.synchronize()
-			self.first = False
+
+		if (not np.array_equal(self.X_train, X)) or (not np.array_equal(self.encoded_Y_train, encoded_Y)):
+			self.X_train = X
+			self.encoded_Y_train = encoded_Y
+			self.encode_X(X, self.encoded_X_training_gpu)
+			cuda.memcpy_htod(self.Y_gpu, encoded_Y)
 
 		for epoch in range(epochs):
 			for e in range(number_of_examples):
