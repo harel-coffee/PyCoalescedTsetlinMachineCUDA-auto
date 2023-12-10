@@ -113,13 +113,13 @@ for i in range(epochs):
 	for batch in range(batches):
 		print("Batch", batch)
 		Y_test_predicted = np.concatenate((Y_test_predicted, tm.predict(X_test[batch*batch_size_test:(batch+1)*batch_size_test])))
-	result_test = 100*(Y_test_predicted == Y_test).mean()
+	result_test = 100*(Y_test_predicted == Y_test[batch_size_test*batches]).mean()
 	stop_testing = time()
 
 	Y_train_predicted = np.zeros(0, dtype=np.uint32)
 	for batch in range(batches):
 		print("Batch", batch)
 		Y_train_predicted = np.concatenate((Y_train_predicted, tm.predict(X_train[batch*batch_size_train:(batch+1)*batch_size_train])))
-	result_train = 100*(Y_train_predicted == Y_train).mean()
+	result_train = 100*(Y_train_predicted == Y_train[batch_size_train*batches]).mean()
 
 	print("#%d Accuracy Test: %.2f%% Accuracy Train: %.2f%% Training: %.2fs Testing: %.2fs" % (i+1, result_test, result_train, stop_training-start_training, stop_testing-start_testing))
