@@ -34,11 +34,11 @@ train,test = keras.datasets.imdb.load_data(num_words=NUM_WORDS, maxlen=maxlen, i
 train_x, train_y = train
 test_x, test_y = test
 
-train_x = train_x[0:100]
-train_y = train_y[0:100]
+train_x = train_x[0:1000]
+train_y = train_y[0:1000]
 
-test_x = test_x[0:100]
-test_y = test_y[0:100]
+test_x = test_x[0:1000]
+test_y = test_y[0:1000]
 
 word_to_id = keras.datasets.imdb.get_word_index()
 word_to_id = {k:(v+INDEX_FROM) for k,v in word_to_id.items()}
