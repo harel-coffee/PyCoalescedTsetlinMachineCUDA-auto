@@ -51,7 +51,7 @@ print("Retrieving embeddings...")
 
 
 encoding = {}
-f = open("/data/near-lossless-binarization/binary_vectors_1024.vec", "r")
+f = open("/data/near-lossless-binarization/binary_vectors_fasttext_1024.vec", "r")
 # #f = open("/data/near-lossless-binarization/binary_vectors_fasttext_256.vec", "r")
 # #f = open("/data/near-lossless-binarization/binary_vectors_bayesian_256.bin", "r")
 
