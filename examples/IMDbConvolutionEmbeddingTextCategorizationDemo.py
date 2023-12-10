@@ -102,23 +102,22 @@ batch_size_test = Y_test.shape[0] // batches
 
 tm = MultiClassConvolutionalTsetlinMachine2D(clauses, T, s, (1, 1))
 for i in range(epochs):
-    start_training = time()
-    for batch in range(batches):
-    	print("Batch", batch)
-    	tm.fit(X_train[batch*batch_size_train:(batch+1)*batch_size_train], Y_train[batch*batch_size_train:(batch+1)*batch_size_train], epochs=1, incremental=True)
-    stop_training = time()
+	start_training = time()
+	for batch in range(batches):
+		print("Batch", batch)
+		tm.fit(X_train[batch*batch_size_train:(batch+1)*batch_size_train], Y_train[batch*batch_size_train:(batch+1)*batch_size_train], epochs=1, incremental=True)
+	stop_training = time()
 
-    start_testing = time()
+	start_testing = time()
+	Y_test_predicted = np.zeros(0, dtype=np.uint32)
+	for batch in range(batches):
+		print("Batch", batch)
+		Y_test_predicted = np.concatenate((Y_test_predicted, tm.predict(X_test[batch*batch_size_test:(batch+1)*batch_size_test])))
+	result_test = 100*(Y_test_predicted == Y_test).mean()
+	stop_testing = time()
 
-    Y_test_predicted = np.zeros(0, dtype=np.uint32)
-    for batch in range(batches):
-    	print("Batch", batch)
-    	Y_test_predicted = np.concatenate((Y_test_predicted, tm.predict(X_test[batch*batch_size_test:(batch+1)*batch_size_test])))
-    result_test = 100*(Y_test_predicted == Y_test).mean()
-    stop_testing = time()
-
-    Y_train_predicted = np.zeros(0, dtype=np.uint32)
-    for batch in range(batches):
+	Y_train_predicted = np.zeros(0, dtype=np.uint32)
+	for batch in range(batches):
     	print("Batch", batch)
     	Y_train_predicted = np.concatenate((Y_train_predicted, tm.predict(X_train[batch*batch_size_train:(batch+1)*batch_size_train])))
 	result_train = 100*(Y_train_predicted == Y_train).mean()
