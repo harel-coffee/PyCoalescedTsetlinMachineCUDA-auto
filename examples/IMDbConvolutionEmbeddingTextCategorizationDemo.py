@@ -17,12 +17,12 @@ epochs = 100
 
 batches = 10
 
-hypervector_size = 2048
-bits = 1024
+hypervector_size = 4096
+bits = 2048
 
 clauses = 10000
 T = 8000
-s = 20.0
+s = 10.0
 
 NUM_WORDS=10000
 INDEX_FROM=2
