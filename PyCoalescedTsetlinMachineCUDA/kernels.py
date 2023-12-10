@@ -383,9 +383,9 @@ code_encode = """
 
 			unsigned int input_step_size = global_number_of_features;
 
-			for (int i = index; i < number_of_examples; i += stride) {
+			for (unsigned long long i = index; i < number_of_examples; i += stride) {
 				unsigned long long encoded_pos = i * number_of_patches * number_of_ta_chunks;
-				unsigned int input_pos = i * input_step_size;
+				unsigned long long input_pos = i * input_step_size;
 
 				int patch_nr = 0;
 				// Produce the patches of the current image
