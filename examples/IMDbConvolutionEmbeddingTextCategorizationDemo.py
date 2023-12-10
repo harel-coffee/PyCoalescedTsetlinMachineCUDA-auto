@@ -15,8 +15,10 @@ maxlen = 500
 
 epochs = 100
 
-hypervector_size = 1024
-bits = 512
+batches = 10
+
+hypervector_size = 2048
+bits = 1024
 
 clauses = 10000
 T = 8000
@@ -32,6 +34,12 @@ train,test = keras.datasets.imdb.load_data(num_words=NUM_WORDS, maxlen=maxlen, i
 train_x, train_y = train
 test_x, test_y = test
 
+train_x = train_x[0:100]
+train_y = train_y[0:100]
+
+test_x = test_x[0:100]
+test_y = test_y[0:100]
+
 word_to_id = keras.datasets.imdb.get_word_index()
 word_to_id = {k:(v+INDEX_FROM) for k,v in word_to_id.items()}
 word_to_id["<PAD>"] = 0
@@ -44,26 +52,26 @@ id_to_word = {value:key for key,value in word_to_id.items()}
 
 print("Retrieving embeddings...")
 
-# indexes = np.arange(hypervector_size, dtype=np.uint32)
-# encoding = {}
-# for i in range(NUM_WORDS+INDEX_FROM):
-# 	encoding[i] = np.random.choice(indexes, size=(bits), replace=False)
-
-
+indexes = np.arange(hypervector_size, dtype=np.uint32)
 encoding = {}
-#f = open("/data/near-lossless-binarization/binary_vectors_1024.vec", "r")
-#f = open("/data/near-lossless-binarization/binary_vectors_fasttext_256.vec", "r")
-f = open("/data/near-lossless-binarization/wiki_binary_vectors_bayesian_1024_5000_50.bin", "r")
+for i in range(NUM_WORDS+INDEX_FROM):
+	encoding[i] = np.random.choice(indexes, size=(bits), replace=False)
 
-line = f.readline()
-line = f.readline().strip()
-while line:
-	entries = line.split(" ")
-	if entries[0] in word_to_id:
-		values = np.unpackbits(np.fromstring(" ".join(entries[1:]), dtype=np.int64, sep=' ').view(np.uint8))
-		encoding[word_to_id[entries[0]]] = np.unpackbits(np.fromstring(" ".join(entries[1:]), dtype=np.int64, sep=' ').view(np.uint8)).nonzero()
-	line = f.readline().strip()
-f.close()
+
+# encoding = {}
+# #f = open("/data/near-lossless-binarization/binary_vectors_1024.vec", "r")
+# #f = open("/data/near-lossless-binarization/binary_vectors_fasttext_256.vec", "r")
+# f = open("/data/near-lossless-binarization/wiki_binary_vectors_bayesian_1024_5000_50.bin", "r")
+
+# line = f.readline()
+# line = f.readline().strip()
+# while line:
+# 	entries = line.split(" ")
+# 	if entries[0] in word_to_id:
+# 		values = np.unpackbits(np.fromstring(" ".join(entries[1:]), dtype=np.int64, sep=' ').view(np.uint8))
+# 		encoding[word_to_id[entries[0]]] = np.unpackbits(np.fromstring(" ".join(entries[1:]), dtype=np.int64, sep=' ').view(np.uint8)).nonzero()
+# 	line = f.readline().strip()
+# f.close()
 	
 print("Producing bit representation...")
 
@@ -89,16 +97,30 @@ for e in range(test_y.shape[0]):
 
 Y_test = test_y.astype(np.uint32)
 
+batch_size_train = Y_train.shape[0] // batches
+batch_size_test = Y_test.shape[0] // batches
+
 tm = MultiClassConvolutionalTsetlinMachine2D(clauses, T, s, (1, 1))
 for i in range(epochs):
     start_training = time()
-    tm.fit(X_train, Y_train, epochs=1, incremental=True)
+    for batch in range(batches):
+    	print("Batch", batch)
+	    tm.fit(X_train[batch*batch_size_train:(batch+1)*batch_size_train], Y_train[batch*batch_size_train:(batch+1)*batch_size_train], epochs=1, incremental=True)
     stop_training = time()
 
     start_testing = time()
-    result_test = 100*(tm.predict(X_test) == Y_test).mean()
+
+    Y_test_predicted = np.zeros(0, dtype=np.uint32)
+    for batch in range(batches):
+    	print("Batch", batch)
+    	Y_test_predicted = np.concatenate((Y_test_predicted, tm.predict(X_test[batch*batch_size_test:(batch+1)*batch_size_test])))
+    result_test = 100*(Y_test_predicted == Y_test).mean()
     stop_testing = time()
 
-    result_train = 100*(tm.predict(X_train) == Y_train).mean()
+ 	Y_train_predicted = np.zeros(0, dtype=np.uint32)
+    for batch in range(batches):
+    	print("Batch", batch)
+    	Y_train_predicted = np.concatenate((Y_train_predicted, tm.predict(X_train[batch*batch_size_train:(batch+1)*batch_size_train])))
+    result_train = 100*(Y_train_predicted == Y_train).mean()
 
     print("#%d Accuracy Test: %.2f%% Accuracy Train: %.2f%% Training: %.2fs Testing: %.2fs" % (i+1, result_test, result_train, stop_training-start_training, stop_testing-start_testing))
