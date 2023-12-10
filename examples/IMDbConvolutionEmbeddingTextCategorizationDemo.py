@@ -105,7 +105,7 @@ for i in range(epochs):
     start_training = time()
     for batch in range(batches):
     	print("Batch", batch)
-	    tm.fit(X_train[batch*batch_size_train:(batch+1)*batch_size_train], Y_train[batch*batch_size_train:(batch+1)*batch_size_train], epochs=1, incremental=True)
+    	tm.fit(X_train[batch*batch_size_train:(batch+1)*batch_size_train], Y_train[batch*batch_size_train:(batch+1)*batch_size_train], epochs=1, incremental=True)
     stop_training = time()
 
     start_testing = time()
