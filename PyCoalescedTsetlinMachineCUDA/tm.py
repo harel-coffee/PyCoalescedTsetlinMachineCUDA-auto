@@ -57,6 +57,8 @@ class CommonTsetlinMachine():
 		self.prepare_encode = mod_encode.get_function("prepare_encode")
 		self.encode = mod_encode.get_function("encode")
 
+		self.first = True
+
 	def encode_X(self, X, encoded_X_gpu):
 		number_of_examples = X.shape[0]
 
@@ -137,7 +139,7 @@ class CommonTsetlinMachine():
 
 #define NEGATIVE_CLAUSES %d
 
-#define PATCHES %d
+#define PATCHES %dULL
 
 #define NUMBER_OF_EXAMPLES %d
 		""" % (self.number_of_outputs, self.number_of_clauses, self.number_of_features, self.number_of_state_bits, self.boost_true_positive_feedback, self.s, self.T, self.negative_clauses, self.number_of_patches, number_of_examples)
@@ -195,9 +197,6 @@ class CommonTsetlinMachine():
 
 			self.allocate_gpu_memory(number_of_examples)
 
-			self.prepare(g.state, self.ta_state_gpu, self.clause_weights_gpu, self.class_sum_gpu, grid=self.grid, block=self.block)
-			cuda.Context.synchronize()
-
 			mod_update = SourceModule(parameters + kernels.code_header + kernels.code_update, no_extern_c=True)
 			self.update = mod_update.get_function("update")
 			self.update.prepare("PPPPPPi")
@@ -210,9 +209,11 @@ class CommonTsetlinMachine():
 		
 			self.Y_gpu = cuda.mem_alloc(encoded_Y.nbytes)
 			cuda.memcpy_htod(self.Y_gpu, encoded_Y)
-		elif incremental == False:
+		
+		if incremental == False or self.first:
 			self.prepare(g.state, self.ta_state_gpu, self.clause_weights_gpu, self.class_sum_gpu, grid=self.grid, block=self.block)
 			cuda.Context.synchronize()
+			self.first = False
 
 		for epoch in range(epochs):
 			for e in range(number_of_examples):
