@@ -15,10 +15,10 @@ maxlen = 500
 
 epochs = 100
 
-batches = 10
+batches = 1
 
-hypervector_size = 2048
-bits = 1024
+hypervector_size = 64
+bits = 32
 
 clauses = 10000
 T = 8000
