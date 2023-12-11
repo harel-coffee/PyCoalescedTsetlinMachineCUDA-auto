@@ -29,7 +29,7 @@ INDEX_FROM=2
 
 print("Downloading dataset...")
 
-train, test = keras.datasets.reuters.load_data(num_words=args.reuters_num_words, index_from=args.reuters_index_from)
+train,test = keras.datasets.reuters.load_data(num_words=NUM_WORDS, maxlen=maxlen, index_from=INDEX_FROM)
 train_x, train_y = train
 test_x, test_y = test
 
