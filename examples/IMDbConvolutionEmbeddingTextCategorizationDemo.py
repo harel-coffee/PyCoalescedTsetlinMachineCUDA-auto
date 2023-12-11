@@ -18,9 +18,9 @@ epochs = 25
 batches = 10
 
 hypervector_size = 2048
-bits = 10
+bits = 1024
 
-clauses = 10000
+clauses = 10000*2
 T = 8000
 s = 40.0
 
