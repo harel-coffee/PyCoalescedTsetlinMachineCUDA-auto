@@ -110,7 +110,7 @@ for i in range(epochs):
 	for batch in range(batches):
 		Y_test_predicted = np.concatenate((Y_test_predicted, tm.predict(X_test[batch*batch_size_test:(batch+1)*batch_size_test])))
 	result_test = 100*(Y_test_predicted == Y_test[:batch_size_test*batches]).mean()
-	f1_test = f1_score(Y_test[:batch_size_test*batches], Y_test_predicted, average='macro')
+	f1_test = f1_score(Y_test[:batch_size_test*batches], Y_test_predicted, average='macro')*100
 	stop_testing = time()
 
 	Y_train_predicted = np.zeros(0, dtype=np.uint32)
@@ -118,6 +118,6 @@ for i in range(epochs):
 		Y_train_predicted = np.concatenate((Y_train_predicted, tm.predict(X_train[batch*batch_size_train:(batch+1)*batch_size_train])))
 	result_train = 100*(Y_train_predicted == Y_train[:batch_size_train*batches]).mean()
 
-	f1_train = f1_score(Y_train[:batch_size_train*batches], Y_train_predicted, average='macro')
+	f1_train = f1_score(Y_train[:batch_size_train*batches], Y_train_predicted, average='macro')*100
 
 	print("#%d F1 Test: %.2f%% F1 Train: %.2f%% Accuracy Test: %.2f%% Accuracy Train: %.2f%% Training: %.2fs Testing: %.2fs" % (i+1, f1_test, f1_train, result_test, result_train, stop_training-start_training, stop_testing-start_testing))
