@@ -18,8 +18,8 @@ epochs = 25
 
 batches = 10
 
-hypervector_size = 2048
-bits = 1024
+hypervector_size = 32
+bits = 16
 
 clauses = 10000*2
 T = 8000
@@ -120,4 +120,4 @@ for i in range(epochs):
 
 	f1_train = f1_score(Y_train[:batch_size_train*batches], Y_train_predicted, average='macro')
 
-	print("#%d Accuracy Test: %.2f%% Accuracy Train: %.2f%% Training: %.2fs Testing: %.2fs" % (i+1, result_test, result_train, stop_training-start_training, stop_testing-start_testing))
+	print("#%d F1 Test: %.2f%% F1 Train: %.2f%% Accuracy Test: %.2f%% Accuracy Train: %.2f%% Training: %.2fs Testing: %.2fs" % (i+1, f1_test, f1_train, result_test, result_train, stop_training-start_training, stop_testing-start_testing))
