@@ -34,7 +34,7 @@ train_x, train_y = train
 test_x, test_y = test
 
 word_to_id = keras.datasets.reuters.get_word_index()
-word_to_id = {k: (v + args.reuters_index_from) for k, v in word_to_id.items()}
+word_to_id = {k:(v+INDEX_FROM) for k,v in word_to_id.items()}
 word_to_id["<PAD>"] = 0
 word_to_id["<START>"] = 1
 word_to_id["<UNK>"] = 2
