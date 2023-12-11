@@ -20,7 +20,7 @@ batches = 10
 hypervector_size = 1024
 bits = 10
 
-clauses = 10000*48
+clauses = 10000*46
 T = 8000
 s = 40.0
 
