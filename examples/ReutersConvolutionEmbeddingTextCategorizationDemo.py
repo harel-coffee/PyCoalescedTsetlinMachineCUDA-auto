@@ -9,7 +9,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from scipy.sparse import csr_matrix, csc_matrix, lil_matrix
 
-from PyCoalescedTsetlinMachineCUDA.tm import MultiClassConvolutionalTsetlinMachine2D, MultiClassTsetlinMachine
+#from PyCoalescedTsetlinMachineCUDA.tm import MultiClassConvolutionalTsetlinMachine2D, MultiClassTsetlinMachine
+from tmu.models.classification.vanilla_classifier import TMClassifier
 
 maxlen = 500
 
@@ -18,9 +19,9 @@ epochs = 25
 batches = 10
 
 hypervector_size = 2048
-bits = 10
+bits = 1024
 
-clauses = 10000*46
+clauses = 10000#*46
 T = 8000
 s = 40.0
 
@@ -92,7 +93,8 @@ Y_test = test_y.astype(np.uint32)
 batch_size_train = Y_train.shape[0] // batches
 batch_size_test = Y_test.shape[0] // batches
 
-tm = MultiClassConvolutionalTsetlinMachine2D(clauses, T, s, (1, 1))
+tm = TMClassifier(clauses, T, s, patch_dim=(1,1), platform="GPU", weighted_clauses=True)
+#tm = MultiClassConvolutionalTsetlinMachine2D(clauses, T, s, (1, 1))
 for i in range(epochs):
 	start_training = time()
 	for batch in range(batches):
