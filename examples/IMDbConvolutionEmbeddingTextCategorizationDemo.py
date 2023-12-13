@@ -83,8 +83,9 @@ for e in range(train_y.shape[0]):
 				X_train[e, position, 0][encoding[word_id]] = 1
 				previous_word_id = word_id
 			else:
-				X_train[e, position, 0][encoding[word_id][encoding[word_id] % 2 == 0]] = 1
-				X_train[e, position, 0][encoding[previous_word_id][encoding[previous_word_id] % 2 == 1]] = 1
+				X_train[e, position, 0][np.setxor1d(encoding[word_id], encoding[previous_word_id])] = 1
+				#X_train[e, position, 0][encoding[word_id][encoding[word_id] % 2 == 0]] = 1
+				#X_train[e, position, 0][encoding[previous_word_id][encoding[previous_word_id] % 2 == 1]] = 1
 			position += 1
 
 Y_train = train_y.astype(np.uint32)
@@ -99,8 +100,9 @@ for e in range(test_y.shape[0]):
 				X_test[e, position, 0][encoding[word_id]] = 1
 				previous_word_id = word_id
 			else:
-				X_test[e, position, 0][encoding[word_id][encoding[word_id] % 2 == 0]] = 1
-				X_test[e, position, 0][encoding[previous_word_id][encoding[previous_word_id] % 2 == 1]] = 1
+				X_test[e, position, 0][np.setxor1d(encoding[word_id], encoding[previous_word_id])] = 1
+				#X_test[e, position, 0][encoding[word_id][encoding[word_id] % 2 == 0]] = 1
+				#X_test[e, position, 0][encoding[previous_word_id][encoding[previous_word_id] % 2 == 1]] = 1
 			position += 1
 
 Y_test = test_y.astype(np.uint32)
