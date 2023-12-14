@@ -18,8 +18,8 @@ epochs = 250
 
 batches = 10
 
-hypervector_size = 2048
-bits = 1024
+hypervector_size = 4096
+bits = 2048
 
 clauses = 10000*2
 T = 8000
