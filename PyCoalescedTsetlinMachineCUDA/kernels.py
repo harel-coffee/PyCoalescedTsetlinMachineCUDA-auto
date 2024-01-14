@@ -137,7 +137,7 @@ code_update = """
 
 					// Type I Feedback
 					for (int la_chunk = 0; la_chunk < LA_CHUNKS; ++la_chunk) {
-     						#if S > 1.0
+     						#if S > 1
 							// Generate random bit values
 							unsigned int la_feedback = 0;
 							for (int b = 0; b < INT_SIZE; ++b) {
