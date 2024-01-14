@@ -137,25 +137,35 @@ code_update = """
 
 					// Type I Feedback
 					for (int la_chunk = 0; la_chunk < LA_CHUNKS; ++la_chunk) {
-						// Generate random bit values
-						unsigned int la_feedback = 0;
-						for (int b = 0; b < INT_SIZE; ++b) {
-							if (curand_uniform(localState) <= 1.0/S) {
-								la_feedback |= (1 << b);
+     						#if S > 1.0
+							// Generate random bit values
+							unsigned int la_feedback = 0;
+							for (int b = 0; b < INT_SIZE; ++b) {
+								if (curand_uniform(localState) <= 1.0/S) {
+									la_feedback |= (1 << b);
+								}
 							}
-						}
+       
 
-						if (clause_output) {
-							#if BOOST_TRUE_POSITIVE_FEEDBACK == 1
+							if (clause_output) {
+								#if BOOST_TRUE_POSITIVE_FEEDBACK == 1
+									inc(ta_state, 0, la_chunk, X[clause_patch*LA_CHUNKS + la_chunk]);
+								#else
+									inc(ta_state, 0, la_chunk, X[clause_patch*LA_CHUNKS + la_chunk] & (~la_feedback));
+								#endif
+	
+								dec(ta_state, 0, la_chunk, (~X[clause_patch*LA_CHUNKS + la_chunk]) & la_feedback);
+							} else {
+								dec(ta_state, 0, la_chunk, la_feedback);
+							}
+       						#else
+	     						if (clause_output) {
 								inc(ta_state, 0, la_chunk, X[clause_patch*LA_CHUNKS + la_chunk]);
-							#else
-								inc(ta_state, 0, la_chunk, X[clause_patch*LA_CHUNKS + la_chunk] & (~la_feedback));
-							#endif
-
-							dec(ta_state, 0, la_chunk, (~X[clause_patch*LA_CHUNKS + la_chunk]) & la_feedback);
-						} else {
-							dec(ta_state, 0, la_chunk, la_feedback);
-						}
+								dec(ta_state, 0, la_chunk, (~X[clause_patch*LA_CHUNKS + la_chunk]));
+							} else {
+								dec(ta_state, 0, la_chunk, ~0);
+							}
+       						#endif
 					}
 				} else if (target*sign < 0 && clause_output) {
 					// Type II Feedback
